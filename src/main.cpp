@@ -7,9 +7,11 @@
 #include <memory>
 #include <thread>
 #include <vector>
+#include <filesystem>
 
 int main(int argc, char *argv[]) {
-    if (argc <= 1) {
+    if (argc <= 1 || std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help") {
+        std::cout << "This is Wuqiong Zhao's version of jalolla." << std::endl;
         std::cout << "[Usage] ./lajolla [-t num_threads] [-o output_file_name] filename.xml" << std::endl;
         return 0;
     }
@@ -25,6 +27,10 @@ int main(int argc, char *argv[]) {
         } else {
             filenames.push_back(std::string(argv[i]));
         }
+    }
+    if (filenames.empty()) {
+        std::cerr << "ERROR: No input file specified." << std::endl;
+        return 1;
     }
 
     RTCDevice embree_device = rtcNewDevice(nullptr);

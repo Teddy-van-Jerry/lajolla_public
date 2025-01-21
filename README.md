@@ -1,6 +1,9 @@
 # lajolla
 UCSD CSE 272 renderer ([Wuqiong Zhao](https://wqzhao.org)'s version).
 
+> [!IMPORTANT]
+> Support for Windows has been dropped as I do not use Windows for development.
+
 ## Build
 All the dependencies are included. Use CMake to build.
 If you are on Unix systems, try

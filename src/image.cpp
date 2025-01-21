@@ -133,11 +133,10 @@ Image3 imread3(const fs::path &filename) {
 }
 
 void imwrite(const fs::path &filename, const Image3 &image) {
-#ifdef _WINDOWS
-    if (ends_with(filename.string(), ".pfm")) {
-#else
+    if (auto parent_dir = filename.parent_path(); !parent_dir.string().empty() && !fs::exists(filename.parent_path())) {
+        fs::create_directories(filename.parent_path());
+    }
     if (ends_with(filename, ".pfm")) {
-#endif
         std::ofstream ofs(filename.c_str(), std::ios::binary);
         ofs << "PF" << std::endl;
         ofs << image.width << " " << image.height << std::endl;
@@ -147,23 +146,14 @@ void imwrite(const fs::path &filename, const Image3 &image) {
         std::transform(image.data.cbegin(), image.data.cend(), data.begin(),
             [] (const Vector3 &v) {return Vector3f(v.x, v.y, v.z);});
         ofs.write((const char *)data.data(), data.size() * sizeof(Vector3f));
-#ifdef _WINDOWS
-    } else if (ends_with(filename.string(), ".exr")) {
-#else
     } else if (ends_with(filename, ".exr")) {
-#endif
         // Convert image to float
         vector<Vector3f> data(image.data.size());
         std::transform(image.data.cbegin(), image.data.cend(), data.begin(),
             [] (const Vector3 &v) {return Vector3f(v.x, v.y, v.z);});
         const char* err = nullptr;
-#ifdef _WINDOWS
-        int ret = SaveEXR((float*)data.data(),
-            image.width, image.height, 3, 1 /* write as fp16 */, filename.string().c_str(), &err);
-#else
         int ret = SaveEXR((float*)data.data(),
             image.width, image.height, 3, 1 /* write as fp16 */, filename.c_str(), &err);
-#endif
         if (ret != TINYEXR_SUCCESS) {
             std::cerr << "OpenEXR error: " << err << std::endl;
             FreeEXRErrorMessage(err);

@@ -34,14 +34,14 @@
 # CMake
 build/
 
-# Embree binaries
-!embree/bin/*
-!embree/lib-linux/*
-!embree/lib-macos/*
-!embree/lib-win32/*
+# CLang Cache
+*.cache
 
 # obj files in scenes directory
 !scenes/**/*.obj
+
+# Generated Images
+images/
 
 # macOS
 .DS_Store
