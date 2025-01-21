@@ -13,10 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         include:
-          - os: windows-latest
-            triplet: x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
           - os: macos-latest
@@ -24,6 +22,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install Embree (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libtbb-dev
+        sudo apt-get install -y libembree-dev
+    - name: Install Embree (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install tbb
+        brew install embree
     - name: configure
       run: mkdir build; cd build; cmake ..
     - name: make
