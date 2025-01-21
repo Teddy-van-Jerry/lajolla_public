@@ -105,10 +105,8 @@ add_library(lajolla_lib STATIC ${SRCS})
 add_executable(lajolla src/main.cpp)
 target_link_libraries(lajolla lajolla_lib)
 if(MSVC)
-  add_custom_command(TARGET lajolla POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-      "${PROJECT_SOURCE_DIR}/embree/bin"
-      $<TARGET_FILE_DIR:lajolla>)
+  # MSVC support has been dropped by Wuqiong Zhao.
+  # I will never use MSVC for this project.
 endif()
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
