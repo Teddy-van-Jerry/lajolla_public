@@ -7,7 +7,7 @@ UCSD CSE 272 renderer ([Wuqiong Zhao](https://wqzhao.org)'s version).
 ## Build
 All the dependencies are included. Use CMake to build.
 If you are on Unix systems, try
-```
+```sh
 mkdir build
 cd build
 cmake ..
@@ -15,11 +15,19 @@ cmake --build .
 ```
 It requires compilers that support C++17 (gcc version >= 8, clang version >= 7, Apple Clang version >= 11.0).
 
-Apple M1 users: you might need to build Embree from scratch since the prebuilt MacOS binary provided is built for x86 machines. (But try build command above first.)
+Apple M1 users need to build Embree from scratch since the prebuilt MacOS binary provided is built for x86 machines:
+```sh
+brew install tbb
+git clone https://github.com/RenderKit/embree.git --depth=1
+cd embree && mkdir build && cd build
+cmake ..
+make -j
+sudo make install
+```
 
 ## Run
 Try
-```
+```sh
 cd build
 ./lajolla ../scenes/cbox/cbox.xml
 ```
@@ -28,7 +36,7 @@ This will generate an image "image.exr".
 To view the image, use [hdrview](https://github.com/wkjarosz/hdrview), or [tev](https://github.com/Tom94/tev).
 The macOS built-in Preview app can also open EXR files.
 
-## Acknowledgement
+## Acknowledgment
 The renderer is heavily inspired by [pbrt](https://pbr-book.org/), [mitsuba](http://www.mitsuba-renderer.org/index_old.html), and [SmallVCM](http://www.smallvcm.com/).
 
 - We use [Embree](https://www.embree.org/) for ray casting.

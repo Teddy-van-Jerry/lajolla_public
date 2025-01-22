@@ -66,6 +66,14 @@ inline Real GGX(Real n_dot_h, Real roughness) {
     return GTR2(n_dot_h, roughness);
 }
 
+inline Real GGX(const Vector3 &h, Real roughness, Real anisotropic) {
+    Real aspect = sqrt(Real(1.0) - anisotropic * Real(0.9));
+    const Real alpha_min = Real(0.0001);
+    Real alpha_x = std::max(alpha_min, roughness * roughness / aspect);
+    Real alpha_y = std::max(alpha_min, roughness * roughness * aspect);
+    return Real(1.0) / (c_PI * alpha_x * alpha_y * pow(h.x * h.x / alpha_x / alpha_x + h.y * h.y / alpha_y / alpha_y + h.z * h.z, Real(2.0)));
+}
+
 /// The masking term models the occlusion between the small mirrors of the microfacet models.
 /// See Eric Heitz's paper "Understanding the Masking-Shadowing Function in Microfacet-Based BRDFs"
 /// for a great explanation.
@@ -77,7 +85,19 @@ inline Real smith_masking_gtr2(const Vector3 &v_local, Real roughness) {
     Real a2 = alpha * alpha;
     Vector3 v2 = v_local * v_local;
     Real Lambda = (-1 + sqrt(1 + (v2.x * a2 + v2.y * a2) / v2.z)) / 2;
-    return 1 / (1 + Lambda);
+    return 1.0 / (1.0 + Lambda);
+}
+
+inline Real smith_masking_gtr2(const Vector3 &v_local, Real roughness, Real anisotropic) {
+    Real aspect = sqrt(Real(1.0) - anisotropic * Real(0.9));
+    const Real alpha_min = Real(0.0001);
+    Real alpha_x = std::max(alpha_min, roughness * roughness / aspect);
+    Real alpha_y = std::max(alpha_min, roughness * roughness * aspect);
+    Real ax2 = alpha_x * alpha_x;
+    Real ay2 = alpha_y * alpha_y;
+    Vector3 v2 = v_local * v_local;
+    Real Lambda = (-1 + sqrt(1 + (v2.x * v2.x * ax2 + v2.y * v2.y * ay2) / v2.z / v2.z)) / 2;
+    return 1.0 / (1.0 + Lambda);
 }
 
 /// See "Sampling the GGX Distribution of Visible Normals", Heitz, 2018.
@@ -111,4 +131,45 @@ inline Vector3 sample_visible_normals(const Vector3 &local_dir_in, Real alpha, c
 
     // Transforming the normal back to the ellipsoid configuration
     return normalize(Vector3{alpha * hemi_N.x, alpha * hemi_N.y, max(Real(0), hemi_N.z)});
+}
+
+inline Vector3 sample_visible_normals(
+    const Vector3 &v_local,
+    Real alpha_x,
+    Real alpha_y,
+    const Vector2 &rnd_param)
+{
+    // If the incoming dir is below z=0, flip it (the distribution is symmetrical).
+    if (v_local.z < 0) {
+        return -sample_visible_normals(-v_local, alpha_x, alpha_y, rnd_param);
+    }
+
+    Vector3 v_hemi = normalize(Vector3(
+        alpha_x * v_local.x,
+        alpha_y * v_local.y,
+        v_local.z
+    ));
+
+    Real r   = std::sqrt(rnd_param.x);
+    Real phi = 2 * c_PI * rnd_param.y;
+    Real t1  = r * std::cos(phi);
+    Real t2  = r * std::sin(phi);
+
+    Real s = 0.5 * (1.0 + v_hemi.z);
+    t2 = (1.0 - s) * std::sqrt(std::max(Real(0), 1 - t1 * t1)) + s * t2;
+
+    Vector3 diskN(
+        t1,
+        t2,
+        std::sqrt(std::max(Real(0), 1 - t1 * t1 - t2 * t2))
+    );
+
+    Frame hemiFrame(v_hemi);
+    Vector3 n_hemi = to_world(hemiFrame, diskN);
+
+    return normalize(Vector3(
+        alpha_x * n_hemi.x,
+        alpha_y * n_hemi.y,
+        std::max(Real(0), n_hemi.z)
+    ));
 }
