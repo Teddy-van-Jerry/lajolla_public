@@ -1,1 +1,3 @@
 handouts/* linguist-documentation
+*.h linguist-language=C++
+*.inl linguist-language=C++

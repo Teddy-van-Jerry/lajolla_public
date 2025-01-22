@@ -1,0 +1,12 @@
+#!/bin/sh
+
+build/lajolla -o images/disney_diffuse.exr scenes/disney_bsdf_test/disney_diffuse.xml
+build/lajolla -o images/disney_diffuse_base_diffuse.exr scenes/disney_bsdf_test/disney_diffuse_base_diffuse.xml
+build/lajolla -o images/disney_diffuse_subsurface.exr scenes/disney_bsdf_test/disney_diffuse_subsurface.xml
+build/lajolla -o images/lambertian.exr scenes/disney_bsdf_test/lambertian.xml
+build/lajolla -o images/disney_diffuse_roughness0.1.exr scenes/disney_bsdf_test/disney_diffuse_roughness0.1.xml
+build/lajolla -o images/disney_diffuse_roughness0.9.exr scenes/disney_bsdf_test/disney_diffuse_roughness0.9.xml
+build/lajolla -o images/simple_sphere_disney_diffuse_base_diffuse.exr scenes/disney_bsdf_test/simple_sphere_disney_diffuse_base_diffuse.xml
+build/lajolla -o images/simple_sphere_disney_diffuse_subsurface.exr scenes/disney_bsdf_test/simple_sphere_disney_diffuse_subsurface.xml
+build/lajolla -o images/simple_sphere_disney_diffuse_base_diffuse_grazing.exr scenes/disney_bsdf_test/simple_sphere_disney_diffuse_base_diffuse_grazing.xml
+build/lajolla -o images/simple_sphere_disney_diffuse_subsurface_grazing.exr scenes/disney_bsdf_test/simple_sphere_disney_diffuse_subsurface_grazing.xml
