@@ -7,8 +7,7 @@ Course website: https://cseweb.ucsd.edu/~tzli/cse272/wi2025.
 > Support for Windows has been dropped as I do not use Windows for development.
 
 ## Build
-All the dependencies are included. Use CMake to build.
-If you are on Unix systems, try
+This project uses CMake to manage the build process:
 ```sh
 mkdir build
 cd build
@@ -17,6 +16,7 @@ cmake --build .
 ```
 It requires compilers that support C++17 (gcc version >= 8, clang version >= 7, Apple Clang version >= 11.0).
 
+The dependency [`embree`](https://github.com/RenderKit/embree) is required.
 Apple M1 users need to build Embree from scratch since the prebuilt MacOS binary provided is built for x86 machines:
 ```sh
 brew install tbb

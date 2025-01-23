@@ -55,6 +55,18 @@ inline Real fresnel_dielectric(Real n_dot_i, Real eta) {
     return fresnel_dielectric(fabs(n_dot_i), n_dot_t, eta);
 }
 
+// F_c = R0(1.5) + (1 - R0(1.5)) * (1 - |h·w_out|)^5
+inline Real fresnel_clearcoat(Real h_dot_out) {
+    auto r0_from_eta = [](Real eta) {
+        Real t = (eta - Real(1)) / (eta + Real(1));
+        return t * t;
+    };
+    static const Real eta        = Real(1.5);
+    static const Real r0_fixed   = r0_from_eta(eta); // e.g. ~0.04
+    Real base = r0_fixed + (Real(1) - r0_fixed) * std::pow(Real(1) - std::fabs(h_dot_out), Real(5));
+    return base;
+}
+
 inline Real GTR2(Real n_dot_h, Real roughness) {
     Real alpha = roughness * roughness;
     Real a2 = alpha * alpha;
@@ -172,4 +184,12 @@ inline Vector3 sample_visible_normals(
         alpha_y * n_hemi.y,
         std::max(Real(0), n_hemi.z)
     ));
+}
+
+inline Real clearcoat_distribution(const Vector3 &h_local, Real alpha_g)
+{
+    Real a2    = alpha_g * alpha_g;
+    Real denom = Real(1) + (a2 - Real(1)) * (h_local.z * h_local.z);
+    Real loga2 = std::log(a2);
+    return (a2 - Real(1)) / (c_PI * loga2 * denom);
 }
