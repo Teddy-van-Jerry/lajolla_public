@@ -43,6 +43,10 @@ struct TVector3 {
         return *(&x + i);
     }
 
+    TVector3<T> sqrt() const {
+        return TVector3<T>(std::sqrt(x), std::sqrt(y), std::sqrt(z));
+    }
+
     T x, y, z;
 };
 
