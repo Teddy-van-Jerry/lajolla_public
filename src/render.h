@@ -1,9 +1,9 @@
 #pragma once
 
-#include "lajolla.h"
 #include "image.h"
+#include "lajolla.h"
 #include <memory>
 
 struct Scene;
 
-Image3 render(const Scene &scene);
+Image3 render(const Scene& scene);

@@ -13,7 +13,7 @@ struct Ray {
 
 /// We adopt an approach for ray differentials
 /// that is used in Renderman.
-/// See Section 6.6 in "RenderMan: 
+/// See Section 6.6 in "RenderMan:
 /// An Advanced Path Tracing Architecture for Movie Rendering"
 /// https://graphics.pixar.com/library/RendermanTog2018/paper.pdf
 /// The idea is to simplify Igehy's ray differential by only
@@ -33,18 +33,14 @@ struct RayDifferential {
 
 /// These functions propagate the ray differential information.
 inline RayDifferential init_ray_differential(int w, int h) {
-    return RayDifferential{Real(0), Real(0.25) / max(w, h)};
+    return RayDifferential{ Real(0), Real(0.25) / max(w, h) };
 }
 
 /// Update the radius (dp/dx) of a ray differential by propagating it over a distance.
-inline Real transfer(const RayDifferential &r, Real dist) {
-    return r.radius + r.spread * dist;
-}
+inline Real transfer(const RayDifferential& r, Real dist) { return r.radius + r.spread * dist; }
 
 /// Update the spread (dd/dx) of a ray differential by scattering over a reflective surface.
-inline Real reflect(const RayDifferential &r,
-                    Real mean_curvature,
-                    Real roughness) {
+inline Real reflect(const RayDifferential& r, Real mean_curvature, Real roughness) {
     Real spec_spread = r.spread + 2 * mean_curvature * r.radius;
     Real diff_spread = Real(0.2);
     return fmax(spec_spread * (1 - roughness) + diff_spread * roughness, Real(0));
@@ -56,10 +52,7 @@ inline Real reflect(const RayDifferential &r,
 /// We simply guess a formula here: when eta == 1, the spread & radius should not change.
 /// High eta makes ray more concentrated and reduces the spread, and vice versa.
 /// so we simply divide everything by eta.
-inline Real refract(const RayDifferential &r,
-                    Real mean_curvature,
-                    Real eta,
-                    Real roughness) {
+inline Real refract(const RayDifferential& r, Real mean_curvature, Real eta, Real roughness) {
     Real spec_spread = (r.spread + 2 * mean_curvature * r.radius) / eta;
     Real diff_spread = Real(0.2);
     return fmax(spec_spread * (1 - roughness) + diff_spread * roughness, Real(0));

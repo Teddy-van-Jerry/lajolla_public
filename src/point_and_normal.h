@@ -7,6 +7,6 @@
 /// In that case the normal is the direction of the infinitely far point pointing towards the origin,
 /// and position is a point on the scene bounding sphere.
 struct PointAndNormal {
-	Vector3 position;
-	Vector3 normal;
+    Vector3 position;
+    Vector3 normal;
 };

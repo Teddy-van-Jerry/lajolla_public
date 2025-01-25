@@ -12,7 +12,7 @@
 // 1) This introduces race conditions between different pixels, and requires atomic operations.
 // 2) This introduces correlation between pixels and hurts denoising.
 // 3) The splatting approach is biased and creates artifacts at low sampling rates.
-// 4) For filters with infinite supports (e.g., Gaussian), 
+// 4) For filters with infinite supports (e.g., Gaussian),
 //    this requires a discontinuous cutoff radius (otherwise it would be too slow).
 // For these reasons, many modern production renderers have started to employ
 // a different and simpler strategy.
@@ -44,4 +44,4 @@ struct Gaussian {
 
 using Filter = std::variant<Box, Tent, Gaussian>;
 
-Vector2 sample(const Filter &filter, const Vector2 &rnd_param);
+Vector2 sample(const Filter& filter, const Vector2& rnd_param);

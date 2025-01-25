@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lajolla.h"
 #include "camera.h"
+#include "lajolla.h"
 #include "light.h"
 #include "material.h"
 #include "medium.h"
@@ -22,11 +22,11 @@ enum class Integrator {
 };
 
 struct RenderOptions {
-    Integrator integrator = Integrator::Path;
-    int samples_per_pixel = 4;
-    int max_depth = -1;
-    int rr_depth = 5;
-    int vol_path_version = 0;
+    Integrator integrator   = Integrator::Path;
+    int samples_per_pixel   = 4;
+    int max_depth           = -1;
+    int rr_depth            = 5;
+    int vol_path_version    = 0;
     int max_null_collisions = 1000;
 };
 
@@ -41,18 +41,12 @@ struct BSphere {
 /// the parameters of our renderer.
 struct Scene {
     Scene() {}
-    Scene(const RTCDevice &embree_device,
-          const Camera &camera,
-          const std::vector<Material> &materials,
-          const std::vector<Shape> &shapes,
-          const std::vector<Light> &lights,
-          const std::vector<Medium> &media,
+    Scene(const RTCDevice& embree_device, const Camera& camera, const std::vector<Material>& materials,
+          const std::vector<Shape>& shapes, const std::vector<Light>& lights, const std::vector<Medium>& media,
           int envmap_light_id, /* -1 if the scene has no envmap */
-          const TexturePool &texture_pool,
-          const RenderOptions &options,
-          const std::string &output_filename);
+          const TexturePool& texture_pool, const RenderOptions& options, const std::string& output_filename);
     ~Scene();
-    Scene(const Scene& t) = delete;
+    Scene(const Scene& t)            = delete;
     Scene& operator=(const Scene& t) = delete;
 
     RTCDevice embree_device;
@@ -73,7 +67,7 @@ struct Scene {
 
     // Bounding sphere of the scene.
     BSphere bounds;
-    
+
     RenderOptions options;
     std::string output_filename;
 
@@ -82,24 +76,18 @@ struct Scene {
 };
 
 /// Sample a light source from the scene given a random number u \in [0, 1]
-int sample_light(const Scene &scene, Real u);
+int sample_light(const Scene& scene, Real u);
 
 /// The probability mass function of the sampling procedure above.
-Real light_pmf(const Scene &scene, int light_id);
+Real light_pmf(const Scene& scene, int light_id);
 
-inline bool has_envmap(const Scene &scene) {
-    return scene.envmap_light_id != -1;
-}
+inline bool has_envmap(const Scene& scene) { return scene.envmap_light_id != -1; }
 
-inline const Light &get_envmap(const Scene &scene) {
+inline const Light& get_envmap(const Scene& scene) {
     assert(scene.envmap_light_id != -1);
     return scene.lights[scene.envmap_light_id];
 }
 
-inline Real get_shadow_epsilon(const Scene &scene) {
-    return min(scene.bounds.radius * Real(1e-5), Real(0.01));
-}
+inline Real get_shadow_epsilon(const Scene& scene) { return min(scene.bounds.radius * Real(1e-5), Real(0.01)); }
 
-inline Real get_intersection_epsilon(const Scene &scene) {
-    return min(scene.bounds.radius * Real(1e-5), Real(0.01));
-}
+inline Real get_intersection_epsilon(const Scene& scene) { return min(scene.bounds.radius * Real(1e-5), Real(0.01)); }

@@ -13,13 +13,13 @@ struct TableDist1D {
 };
 
 /// Construct the tabular discrete distribution given a vector of positive numbers.
-TableDist1D make_table_dist_1d(const std::vector<Real> &f);
+TableDist1D make_table_dist_1d(const std::vector<Real>& f);
 
 /// Sample an entry from the discrete table given a random number in [0, 1]
-int sample(const TableDist1D &table, Real rnd_param);
+int sample(const TableDist1D& table, Real rnd_param);
 
 /// The probability mass function of the sampling procedure above.
-Real pmf(const TableDist1D &table, int id);
+Real pmf(const TableDist1D& table, int id);
 
 /// TableDist2D stores a 2D piecewise constant distribution
 /// that we can sample from using the functions below.
@@ -37,11 +37,11 @@ struct TableDist2D {
 
 /// Construct the 2D piecewise constant distribution given a vector of positive numbers
 /// and width & height.
-TableDist2D make_table_dist_2d(const std::vector<Real> &f, int width, int height);
+TableDist2D make_table_dist_2d(const std::vector<Real>& f, int width, int height);
 
 /// Given two random number in [0, 1]^2, sample a point in the 2D domain [0, 1]^2
 /// with distribution proportional to f above.
-Vector2 sample(const TableDist2D &table, const Vector2 &rnd_param);
+Vector2 sample(const TableDist2D& table, const Vector2& rnd_param);
 
 /// Probability density of the sampling procedure above.
-Real pdf(const TableDist2D &table, const Vector2 &xy);
+Real pdf(const TableDist2D& table, const Vector2& xy);

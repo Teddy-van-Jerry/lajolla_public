@@ -1,22 +1,22 @@
-#include "parsers/parse_scene.h"
-#include "parallel.h"
 #include "image.h"
+#include "parallel.h"
+#include "parsers/parse_scene.h"
 #include "render.h"
 #include "timer.h"
 #include <embree4/rtcore.h>
+#include <filesystem>
 #include <memory>
 #include <thread>
 #include <vector>
-#include <filesystem>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc <= 1 || std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help") {
         std::cout << "This is Wuqiong Zhao's version of jalolla." << std::endl;
         std::cout << "[Usage] ./lajolla [-t num_threads] [-o output_file_name] filename.xml" << std::endl;
         return 0;
     }
 
-    int num_threads = std::thread::hardware_concurrency();
+    int num_threads        = std::thread::hardware_concurrency();
     std::string outputfile = "";
     std::vector<std::string> filenames;
     for (int i = 1; i < argc; ++i) {
@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     RTCDevice embree_device = rtcNewDevice(nullptr);
     parallel_init(num_threads);
 
-    for (const std::string &filename : filenames) {
+    for (const std::string& filename : filenames) {
         Timer timer;
         tick(timer);
         std::cout << "Parsing and constructing scene " << filename << "." << std::endl;
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
         std::cout << "Done. Took " << tick(timer) << " seconds." << std::endl;
         std::cout << "Rendering..." << std::endl;
         Image3 img = render(*scene);
-        if (outputfile.compare("") == 0) {outputfile = scene->output_filename;}
+        if (outputfile.compare("") == 0) { outputfile = scene->output_filename; }
         std::cout << "Done. Took " << tick(timer) << " seconds." << std::endl;
         imwrite(outputfile, img);
         std::cout << "Image written to " << outputfile << std::endl;
@@ -54,4 +54,3 @@ int main(int argc, char *argv[]) {
     rtcReleaseDevice(embree_device);
     return 0;
 }
-

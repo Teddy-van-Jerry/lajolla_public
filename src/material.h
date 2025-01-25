@@ -112,22 +112,12 @@ struct DisneyBSDF {
 
 // To add more materials, first create a struct for the material, then overload the () operators for all the
 // functors below.
-using Material = std::variant<Lambertian,
-                              RoughPlastic,
-                              RoughDielectric,
-                              DisneyDiffuse,
-                              DisneyMetal,
-                              DisneyGlass,
-                              DisneyClearcoat,
-                              DisneySheen,
-                              DisneyBSDF>;
+using Material = std::variant<Lambertian, RoughPlastic, RoughDielectric, DisneyDiffuse, DisneyMetal, DisneyGlass,
+                              DisneyClearcoat, DisneySheen, DisneyBSDF>;
 
 /// We allow non-reciprocal BRDFs, so it's important
 /// to distinguish which direction we are tracing the rays.
-enum class TransportDirection {
-    TO_LIGHT,
-    TO_VIEW
-};
+enum class TransportDirection { TO_LIGHT, TO_VIEW };
 
 /// Given incoming direction and outgoing direction of lights,
 /// both pointing outwards of the surface point,
@@ -136,12 +126,8 @@ enum class TransportDirection {
 /// When the transport direction is towards the lights,
 /// dir_in is the view direction, and dir_out is the light direction.
 /// Vice versa.
-Spectrum eval(const Material &material,
-              const Vector3 &dir_in,
-              const Vector3 &dir_out,
-              const PathVertex &vertex,
-              const TexturePool &texture_pool,
-              TransportDirection dir = TransportDirection::TO_LIGHT);
+Spectrum eval(const Material& material, const Vector3& dir_in, const Vector3& dir_out, const PathVertex& vertex,
+              const TexturePool& texture_pool, TransportDirection dir = TransportDirection::TO_LIGHT);
 
 struct BSDFSampleRecord {
     Vector3 dir_out;
@@ -155,29 +141,21 @@ struct BSDFSampleRecord {
 /// and the roughness of the selected BSDF layer for path tracer's use.
 /// Return an invalid value if the sampling
 /// failed (e.g., if the incoming direction is invalid).
-/// If dir == TO_LIGHT, incoming direction is the view direction and 
+/// If dir == TO_LIGHT, incoming direction is the view direction and
 /// we're sampling for the light direction. Vice versa.
-std::optional<BSDFSampleRecord> sample_bsdf(
-    const Material &material,
-    const Vector3 &dir_in,
-    const PathVertex &vertex,
-    const TexturePool &texture_pool,
-    const Vector2 &rnd_param_uv,
-    const Real &rnd_param_w,
-    TransportDirection dir = TransportDirection::TO_LIGHT);
+std::optional<BSDFSampleRecord> sample_bsdf(const Material& material, const Vector3& dir_in, const PathVertex& vertex,
+                                            const TexturePool& texture_pool, const Vector2& rnd_param_uv,
+                                            const Real& rnd_param_w,
+                                            TransportDirection dir = TransportDirection::TO_LIGHT);
 
 /// Given incoming direction and outgoing direction of lights,
 /// both pointing outwards of the surface point,
 /// outputs the probability density of sampling.
-/// If dir == TO_LIGHT, incoming direction is dir_view and 
+/// If dir == TO_LIGHT, incoming direction is dir_view and
 /// we're sampling for dir_light. Vice versa.
-Real pdf_sample_bsdf(const Material &material,
-                     const Vector3 &dir_in,
-                     const Vector3 &dir_out,
-                     const PathVertex &vertex,
-                     const TexturePool &texture_pool,
-                     TransportDirection dir = TransportDirection::TO_LIGHT);
+Real pdf_sample_bsdf(const Material& material, const Vector3& dir_in, const Vector3& dir_out, const PathVertex& vertex,
+                     const TexturePool& texture_pool, TransportDirection dir = TransportDirection::TO_LIGHT);
 
 /// Return a texture from the material for debugging.
 /// If the material contains multiple textures, return an arbitrary one.
-TextureSpectrum get_texture(const Material &material);
+TextureSpectrum get_texture(const Material& material);

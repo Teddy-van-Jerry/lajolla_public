@@ -1,4 +1,4 @@
-Vector2 sample_op::operator()(const Tent &filter) const {
+Vector2 sample_op::operator()(const Tent& filter) const {
     // Tent filter can be sampled through two parts:
     // the positive part is     k(x) = (1 - x / half_width) / normalization
     // and the negative part is k(x) = (1 + x / half_width) / normalization
@@ -10,7 +10,7 @@ Vector2 sample_op::operator()(const Tent &filter) const {
     // we first map the first half [0, 0.5] to a uniform number u \in [0, 1]
     // then we integrate the negative part (1/(h/2)) \int_{-h}^{x} k(x) dx
     // and we get (1/(h/2)) * (x^2/(2h) + x + h/2), h is the half_width
-    // inverting x^2/(2h) + x + h/2 = u * h / 2 
+    // inverting x^2/(2h) + x + h/2 = u * h / 2
     //           (massaging it to x^2 + 2hx + h^2 - u h^2 = 0)
     // we get x = (-2h + sqrt(4h^2 - 4 (h^2 - u h^2))) / 2
     //          = -h + h sqrt(u)
@@ -26,11 +26,7 @@ Vector2 sample_op::operator()(const Tent &filter) const {
     // when v = 0, x = 0, v = 1, x = h
 
     Real h = filter.width / 2;
-    Real x = rnd_param[0] < 0.5 ? 
-        h * (sqrt(2 * rnd_param[0]) - 1) :
-        h * (1 - sqrt(1 - 2 * (rnd_param[0] - Real(0.5))));
-    Real y = rnd_param[1] < 0.5 ? 
-        h * (sqrt(2 * rnd_param[1]) - 1) :
-        h * (1 - sqrt(1 - 2 * (rnd_param[1] - Real(0.5))));
-    return Vector2{x, y};
+    Real x = rnd_param[0] < 0.5 ? h * (sqrt(2 * rnd_param[0]) - 1) : h * (1 - sqrt(1 - 2 * (rnd_param[0] - Real(0.5))));
+    Real y = rnd_param[1] < 0.5 ? h * (sqrt(2 * rnd_param[1]) - 1) : h * (1 - sqrt(1 - 2 * (rnd_param[1] - Real(0.5))));
+    return Vector2{ x, y };
 }

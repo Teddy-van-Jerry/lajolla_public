@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lajolla.h"
 #include "frame.h"
+#include "lajolla.h"
 #include "table_dist.h"
 #include "vector.h"
 #include <embree4/rtcore.h>
@@ -12,7 +12,7 @@ struct PointAndNormal;
 struct PathVertex;
 
 struct ShadingInfo {
-    Vector2 uv; // UV coordinates for texture mapping
+    Vector2 uv;          // UV coordinates for texture mapping
     Frame shading_frame; // the coordinate basis for shading
     Real mean_curvature; // 0.5 * (dN/du + dN/dv)
     // Stores min(length(dp/du), length(dp/dv)), for ray differentials.
@@ -24,7 +24,7 @@ struct ShadingInfo {
 /// "area light ID" that points to a light source if the shape is an area light. area_lightID is set to -1
 /// if the shape is not an area light.
 struct ShapeBase {
-    int material_id = -1;
+    int material_id   = -1;
     int area_light_id = -1;
 
     int interior_medium_id = -1;
@@ -53,53 +53,46 @@ struct TriangleMesh : public ShapeBase {
 using Shape = std::variant<Sphere, TriangleMesh>;
 
 /// Add the shape to an Embree scene.
-uint32_t register_embree(const Shape &shape, const RTCDevice &device, const RTCScene &scene);
+uint32_t register_embree(const Shape& shape, const RTCDevice& device, const RTCScene& scene);
 
 /// Sample a point on the surface given a reference point.
 /// uv & w are uniform random numbers.
-PointAndNormal sample_point_on_shape(const Shape &shape,
-                                     const Vector3 &ref_point,
-                                     const Vector2 &uv,
-                                     Real w);
+PointAndNormal sample_point_on_shape(const Shape& shape, const Vector3& ref_point, const Vector2& uv, Real w);
 
 /// Probability density of the operation above
-Real pdf_point_on_shape(const Shape &shape,
-                        const PointAndNormal &point_on_shape,
-                        const Vector3 &ref_point);
+Real pdf_point_on_shape(const Shape& shape, const PointAndNormal& point_on_shape, const Vector3& ref_point);
 
 /// Useful for sampling.
-Real surface_area(const Shape &shape);
+Real surface_area(const Shape& shape);
 
 /// Some shapes require storing sampling data structures inside. This function initialize them.
-void init_sampling_dist(Shape &shape);
+void init_sampling_dist(Shape& shape);
 
 /// Embree doesn't calculate some shading information for us. We have to do it ourselves.
-ShadingInfo compute_shading_info(const Shape &shape, const PathVertex &vertex);
+ShadingInfo compute_shading_info(const Shape& shape, const PathVertex& vertex);
 
-inline void set_material_id(Shape &shape, int material_id) {
-    std::visit([&](auto &s) { s.material_id = material_id; }, shape);
+inline void set_material_id(Shape& shape, int material_id) {
+    std::visit([&](auto& s) { s.material_id = material_id; }, shape);
 }
-inline void set_area_light_id(Shape &shape, int area_light_id) {
-    std::visit([&](auto &s) { s.area_light_id = area_light_id; }, shape);
+inline void set_area_light_id(Shape& shape, int area_light_id) {
+    std::visit([&](auto& s) { s.area_light_id = area_light_id; }, shape);
 }
-inline void set_interior_medium_id(Shape &shape, int interior_medium_id) {
-    std::visit([&](auto &s) { s.interior_medium_id = interior_medium_id; }, shape);
+inline void set_interior_medium_id(Shape& shape, int interior_medium_id) {
+    std::visit([&](auto& s) { s.interior_medium_id = interior_medium_id; }, shape);
 }
-inline void set_exterior_medium_id(Shape &shape, int exterior_medium_id) {
-    std::visit([&](auto &s) { s.exterior_medium_id = exterior_medium_id; }, shape);
+inline void set_exterior_medium_id(Shape& shape, int exterior_medium_id) {
+    std::visit([&](auto& s) { s.exterior_medium_id = exterior_medium_id; }, shape);
 }
-inline int get_material_id(const Shape &shape) {
-    return std::visit([&](const auto &s) { return s.material_id; }, shape);
+inline int get_material_id(const Shape& shape) {
+    return std::visit([&](const auto& s) { return s.material_id; }, shape);
 }
-inline int get_area_light_id(const Shape &shape) {
-    return std::visit([&](const auto &s) { return s.area_light_id; }, shape);
+inline int get_area_light_id(const Shape& shape) {
+    return std::visit([&](const auto& s) { return s.area_light_id; }, shape);
 }
-inline int get_interior_medium_id(const Shape &shape) {
-    return std::visit([&](const auto &s) { return s.interior_medium_id; }, shape);
+inline int get_interior_medium_id(const Shape& shape) {
+    return std::visit([&](const auto& s) { return s.interior_medium_id; }, shape);
 }
-inline int get_exterior_medium_id(const Shape &shape) {
-    return std::visit([&](const auto &s) { return s.exterior_medium_id; }, shape);
+inline int get_exterior_medium_id(const Shape& shape) {
+    return std::visit([&](const auto& s) { return s.exterior_medium_id; }, shape);
 }
-inline bool is_light(const Shape &shape) {
-    return get_area_light_id(shape) >= 0;
-}
+inline bool is_light(const Shape& shape) { return get_area_light_id(shape) >= 0; }
