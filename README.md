@@ -1,7 +1,8 @@
 # lajolla
 UCSD CSE 272 renderer ([Wuqiong Zhao](https://wqzhao.org)'s version, Winter 2025).
 
-Course website: https://cseweb.ucsd.edu/~tzli/cse272/wi2025.
+- Course website: https://cseweb.ucsd.edu/~tzli/cse272/wi2025.
+- GitHub repo (Wuqiong Zhao's version): [Teddy-van-Jerry/lajolla_wqzhao](https://github.com/Teddy-van-Jerry/lajolla_wqzhao).
 
 > [!IMPORTANT]
 > Support for Windows has been dropped as I do not use Windows for development.

@@ -16,6 +16,7 @@ struct eval_op {
     Spectrum operator()(const RoughDielectric &bsdf) const;
     Spectrum operator()(const DisneyDiffuse &bsdf) const;
     Spectrum operator()(const DisneyMetal &bsdf) const;
+    Spectrum operator()(const DisneyMetalModified &bsdf) const;
     Spectrum operator()(const DisneyGlass &bsdf) const;
     Spectrum operator()(const DisneyClearcoat &bsdf) const;
     Spectrum operator()(const DisneySheen &bsdf) const;
@@ -34,6 +35,7 @@ struct pdf_sample_bsdf_op {
     Real operator()(const RoughDielectric &bsdf) const;
     Real operator()(const DisneyDiffuse &bsdf) const;
     Real operator()(const DisneyMetal &bsdf) const;
+    Real operator()(const DisneyMetalModified &bsdf) const;
     Real operator()(const DisneyGlass &bsdf) const;
     Real operator()(const DisneyClearcoat &bsdf) const;
     Real operator()(const DisneySheen &bsdf) const;
@@ -52,6 +54,7 @@ struct sample_bsdf_op {
     std::optional<BSDFSampleRecord> operator()(const RoughDielectric &bsdf) const;
     std::optional<BSDFSampleRecord> operator()(const DisneyDiffuse &bsdf) const;
     std::optional<BSDFSampleRecord> operator()(const DisneyMetal &bsdf) const;
+    std::optional<BSDFSampleRecord> operator()(const DisneyMetalModified &bsdf) const;
     std::optional<BSDFSampleRecord> operator()(const DisneyGlass &bsdf) const;
     std::optional<BSDFSampleRecord> operator()(const DisneyClearcoat &bsdf) const;
     std::optional<BSDFSampleRecord> operator()(const DisneySheen &bsdf) const;
@@ -71,6 +74,7 @@ struct get_texture_op {
     TextureSpectrum operator()(const RoughDielectric &bsdf) const;
     TextureSpectrum operator()(const DisneyDiffuse &bsdf) const;
     TextureSpectrum operator()(const DisneyMetal &bsdf) const;
+    TextureSpectrum operator()(const DisneyMetalModified &bsdf) const;
     TextureSpectrum operator()(const DisneyGlass &bsdf) const;
     TextureSpectrum operator()(const DisneyClearcoat &bsdf) const;
     TextureSpectrum operator()(const DisneySheen &bsdf) const;
@@ -82,6 +86,7 @@ struct get_texture_op {
 #include "materials/roughdielectric.inl"
 #include "materials/disney_diffuse.inl"
 #include "materials/disney_metal.inl"
+#include "materials/disney_metal_modified.inl"
 #include "materials/disney_glass.inl"
 #include "materials/disney_clearcoat.inl"
 #include "materials/disney_sheen.inl"

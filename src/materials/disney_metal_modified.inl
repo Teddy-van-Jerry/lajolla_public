@@ -1,6 +1,7 @@
 #include "../microfacet.h"
+#include "material.h"
 
-Spectrum eval_op::operator()(const DisneyMetal &bsdf) const {
+Spectrum eval_op::operator()(const DisneyMetalModified &bsdf) const {
     if (dot(vertex.geometric_normal, dir_in) < 0 ||
             dot(vertex.geometric_normal, dir_out) < 0) {
         // No light below the surface
@@ -17,6 +18,10 @@ Spectrum eval_op::operator()(const DisneyMetal &bsdf) const {
     Real anisotropic = eval(bsdf.anisotropic, vertex.uv, vertex.uv_screen_size, texture_pool);
     Real roughness = eval(bsdf.roughness, vertex.uv, vertex.uv_screen_size, texture_pool);
     Real n_dot_in = dot(frame.n, dir_in);
+    Real specular = eval(bsdf.specular, vertex.uv, vertex.uv_screen_size, texture_pool);
+    Real metallic = eval(bsdf.metallic, vertex.uv, vertex.uv_screen_size, texture_pool);
+    Real spec_tint = eval(bsdf.specular_tint, vertex.uv, vertex.uv_screen_size, texture_pool);
+    Real eta = bsdf.eta;
 
     Vector3 lwi = to_local(frame, dir_in);
     Vector3 lwo = to_local(frame, dir_out);
@@ -26,18 +31,34 @@ Spectrum eval_op::operator()(const DisneyMetal &bsdf) const {
     // Clamp roughness to avoid numerical issues.
     roughness = std::clamp(roughness, Real(0.01), Real(1));
     
-    Spectrum F_m = base_color + (1.0 - base_color) * pow(Real(1.0) - fabs(h_dot_out), 5.0);
-    Real D_m = GGX(lwh, roughness, anisotropic);
-    Real G_in = smith_masking_gtr2(lwi, roughness, anisotropic);
+    auto r0_of_eta = [&](Real e) {
+        Real t = (e - Real(1)) / (e + Real(1));
+        return t * t;
+    };
+    Real r0 = r0_of_eta(eta);
+
+    auto lum = luminance(base_color);
+    Spectrum tintColor = make_const_spectrum(1.0);
+    if (lum > 0.0) {
+        tintColor = base_color * (Real(1.0) / lum);
+    }
+
+    Spectrum Ks = (Real(1) - spec_tint) * make_const_spectrum(1.0) + spec_tint * tintColor;
+    Spectrum c0 = specular * r0 * (Real(1)-metallic) * Ks + metallic * base_color;
+    Spectrum Fm = c0 + (make_const_spectrum(1.0) - c0) * std::pow(Real(1.0) - std::fabs(h_dot_out), Real(5.0));
+
+    // 7) distribution & masking
+    Real D_m   = GGX(lwh, roughness, anisotropic);
+    Real G_in  = smith_masking_gtr2(lwi, roughness, anisotropic);
     Real G_out = smith_masking_gtr2(lwo, roughness, anisotropic);
-    Real G_m = G_in * G_out;
+    Real G_m   = G_in * G_out;
     if (fabs(n_dot_in) < Real(0.05)) {
         return make_zero_spectrum();
     }
-    return (F_m * D_m * G_m) / (Real(4.0) * fabs(n_dot_in));
+    return (Fm * D_m * G_m) / (Real(4.0) * std::fabs(n_dot_in));
 }
 
-Real pdf_sample_bsdf_op::operator()(const DisneyMetal &bsdf) const {
+Real pdf_sample_bsdf_op::operator()(const DisneyMetalModified &bsdf) const {
     if (dot(vertex.geometric_normal, dir_in) < 0 ||
             dot(vertex.geometric_normal, dir_out) < 0) {
         // No light below the surface
@@ -72,7 +93,7 @@ Real pdf_sample_bsdf_op::operator()(const DisneyMetal &bsdf) const {
 }
 
 std::optional<BSDFSampleRecord>
-        sample_bsdf_op::operator()(const DisneyMetal &bsdf) const {
+        sample_bsdf_op::operator()(const DisneyMetalModified &bsdf) const {
     if (dot(vertex.geometric_normal, dir_in) < 0) {
         // No light below the surface
         return {};
@@ -107,6 +128,6 @@ std::optional<BSDFSampleRecord>
     return BSDFSampleRecord{ to_world(frame, lwo), Real(0.0), roughness };
 }
 
-TextureSpectrum get_texture_op::operator()(const DisneyMetal &bsdf) const {
+TextureSpectrum get_texture_op::operator()(const DisneyMetalModified &bsdf) const {
     return bsdf.base_color;
 }

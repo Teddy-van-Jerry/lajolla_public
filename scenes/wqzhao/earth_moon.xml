@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<scene version="0.5.0">
+    <!-- Path Tracer Integrator -->
+    <integrator type="path">
+        <integer name="maxDepth" value="8"/>
+    </integrator>
+
+    <!-- Earth Sphere -->
+    <shape type="sphere">
+        <float name="radius" value="1.0"/>
+        <transform name="toWorld">
+            <translate x="0" y="0" z="0"/>
+        </transform>
+        <bsdf type="diffuse">
+            <texture type="bitmap">
+                <string name="filename" value="earth_texture.jpg"/>
+            </texture>
+        </bsdf>
+    </shape>
+
+    <!-- Moon Sphere -->
+    <shape type="sphere">
+        <float name="radius" value="0.27"/>
+        <transform name="toWorld">
+            <translate x="2.5" y="1" z="0"/>
+        </transform>
+        <bsdf type="diffuse">
+            <texture type="bitmap">
+                <string name="filename" value="moon_texture.jpg"/>
+            </texture>
+        </bsdf>
+    </shape>
+
+    <!-- Environment Light -->
+    <emitter type="envmap">
+        <string name="filename" value="space_envmap.exr"/>
+        <float name="scale" value="1.5"/>
+    </emitter>
+
+    <!-- Camera -->
+    <sensor type="perspective">
+        <float name="fov" value="45"/>
+        <transform name="toWorld">
+            <lookAt target="0, 0, 0" origin="5, 5, 2" up="0, 0, 1"/>
+        </transform>
+        <sampler type="independent">
+            <integer name="sampleCount" value="256"/>
+        </sampler>
+        <film type="hdrfilm">
+            <integer name="width" value="1280"/>
+            <integer name="height" value="720"/>
+            <string name="pixelFormat" value="rgb"/>
+            <boolean name="banner" value="false"/>
+        </film>
+    </sensor>
+</scene>

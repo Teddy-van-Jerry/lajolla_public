@@ -59,6 +59,19 @@ struct DisneyMetal {
     Texture<Real> anisotropic;
 };
 
+/// Modified version for DisneyBSDF used in homework 1.
+struct DisneyMetalModified {
+    Texture<Spectrum> base_color;
+    Texture<Real> roughness;
+    Texture<Real> anisotropic;
+
+    Texture<Real> specular;
+    Texture<Real> metallic;
+    Texture<Real> specular_tint;
+
+    Real eta; // internal IOR / externalIOR
+};
+
 /// For homework 1: the transmissive component of the Disney BRDF.
 struct DisneyGlass {
     Texture<Spectrum> base_color;
