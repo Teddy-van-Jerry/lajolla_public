@@ -5,8 +5,27 @@
 // only handle directly visible light sources
 Spectrum vol_path_tracing_1(const Scene& scene, int x, int y, /* pixel coordinates */
                             pcg32_state& rng) {
-    // Homework 2: implememt this!
-    return make_zero_spectrum();
+    // Homework 2: Wuqiong Zhao's implementation
+    auto w = scene.camera.width;
+    auto h = scene.camera.height;
+    Vector2 screen_pos{ (x + next_pcg32_real<Real>(rng)) / w, (y + next_pcg32_real<Real>(rng)) / h };
+    Ray ray = sample_primary(scene.camera, screen_pos);
+
+    RayDifferential ray_diff{ Real(0), Real(0) };
+
+    std::optional<PathVertex> vertex = intersect(scene, ray, ray_diff);
+    if (!vertex) return make_zero_spectrum();
+    Real t_hit = distance(vertex->position, ray.org);
+
+    if (auto medium_id = scene.camera.medium_id; medium_id >= 0) {
+        auto&& medium          = scene.media[medium_id];
+        Spectrum sigma_a       = get_sigma_a(medium, ray.org);
+        Spectrum transmittance = exp(-sigma_a * t_hit);
+        if (is_light(scene.shapes[vertex->shape_id])) {
+            Spectrum Le = emission(*vertex, -ray.dir, scene);
+            return transmittance * Le;
+        } else return make_zero_spectrum();
+    } else return make_zero_spectrum();
 }
 
 // The second simplest volumetric renderer:
