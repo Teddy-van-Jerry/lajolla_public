@@ -472,8 +472,7 @@ def next_event_estimation(p, current_medium):
         next_t = distance(p, isect.position)
       # Account for the transmittance to next_t
       if shadow_medium:
-        T_light *= exp(-sigma_t * next_t)
-        p_trans_dir *= exp(-sigma_t * next_t)
+        u = next(rng) # Sample a channel for sampling
 
       if not isect:
         # Nothing is blocking, we're done
